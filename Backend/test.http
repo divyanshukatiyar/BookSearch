@@ -1,0 +1,1 @@
+POST http://localhost:5000/api/favorites/add?f=6414523741499cad1aa91429

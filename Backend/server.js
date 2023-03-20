@@ -49,7 +49,6 @@ router.get('/search', async (req, res) => {
 // add the "add to favorites" functionality to add a book to the favorites collection
 router.post('/favorites/add', async (req, res) => {
     const bookId = new ObjectId(req.query.f);
-    console.log(bookId)
     try {
         await client.connect();
         const database = client.db('test');
@@ -57,7 +56,7 @@ router.post('/favorites/add', async (req, res) => {
         const favoritesCollection = database.collection('favorites');
         const book = await booksCollection.findOne({ _id: bookId });
         const result = await favoritesCollection.insertOne(book);
-        res.json(result.ops[0]);
+        res.json(result.acknowledged);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -78,6 +77,21 @@ router.delete('/favorites/remove', async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
+    } finally {
+        await client.close();
+    }
+});
+
+router.get('/favorites', async (req, res) => {
+    try {
+        await client.connect();
+        const database = client.db('test');
+        const favoritesCollection = database.collection('favorites');
+        const cursor = favoritesCollection.find();
+        const results = await cursor.toArray();
+        res.send(results);
+    } catch (e) {
+        console.error(e);
     } finally {
         await client.close();
     }
