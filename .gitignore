@@ -1,0 +1,6 @@
+*.ipynb
+.env
+
+venv/
+
+node_modules/
